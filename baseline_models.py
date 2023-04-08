@@ -102,8 +102,6 @@ class GRUClassifier(nn.Module):
         return out
 
 
-
-
 class GAM(nn.Module):
     def __init__(self, channels, rate=4):
         super(GAM, self).__init__()
@@ -135,6 +133,7 @@ class GAM(nn.Module):
         x_spatial_att = self.spatial_attention(x).sigmoid()
         out = x * x_spatial_att
         return out
+
 
 class PreNorm(nn.Module):
     def __init__(self, dim, fn):
@@ -210,13 +209,12 @@ class Transformer(nn.Module):
             x = ff(x) + x
         return x
 
+
 class ViT(nn.Module):
     def __init__(self, image_size, channels, patch_size, num_classes, model_dim,
-                 emb_dropout=0.0, pool='cls', dim_head=64, channel_rate=2,
+                 emb_dropout=0.0, pool='cls', dim_head=64,
                  depth=16, heads=8, mlp_dim=8, dropout=0.0):
-        super(ViTtest_origin, self).__init__()
-
-        mid_channels = channels // channel_rate
+        super(ViT, self).__init__()
 
         image_height, image_width = pair(image_size)
         patch_height, patch_width = pair(patch_size)
@@ -247,34 +245,7 @@ class ViT(nn.Module):
             nn.Linear(model_dim, num_classes)
         )
 
-        self.channel_attention = nn.Sequential(
-            nn.Linear(channels, mid_channels),
-            nn.ReLU(inplace=True),
-            nn.Linear(mid_channels, channels)
-        )
-
-        self.spatial_attention = nn.Sequential(
-            nn.Conv2d(channels, mid_channels, kernel_size=7, stride=1, padding=3),
-            nn.BatchNorm2d(mid_channels),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(mid_channels, channels, kernel_size=7, stride=1, padding=3),
-            nn.BatchNorm2d(channels)
-        )
-
     def forward(self, x):
-        b, c, h, w = x.shape
-
-        # spatial attention
-        x_spatial_att = self.spatial_attention(x).sigmoid()
-        x = x * x_spatial_att
-
-        # channel attention
-        x_permute = x.permute(0, 2, 3, 1).view(b, -1, c)
-        x_att_permute = self.channel_attention(x_permute).view(b, h, w, c)
-        x_channel_att = x_att_permute.permute(0, 3, 1, 2)
-
-        x = x * x_channel_att
-
         # step 1 convert image to embedding vector sequence
         x = self.to_patch_embedding(x)
         b, n, _ = x.shape
