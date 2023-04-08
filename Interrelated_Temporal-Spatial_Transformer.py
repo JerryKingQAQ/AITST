@@ -222,7 +222,7 @@ class GAM_Transformer(nn.Module):
         elif self.model_structure == "no+sa+ca":
             pass
 
-        # step 1 convert image to embedding vector sequence
+        # step 1 convert input to embedding vector sequence
         x = self.to_patch_embedding(x)
         b, n, _ = x.shape
 
@@ -235,9 +235,7 @@ class GAM_Transformer(nn.Module):
         x = self.dropout(x)
 
         # step4 pass embedding to Transformer Encoder
-        # x = self.transformer_encoder(x)
         x = self.transformer(x)
-
         x = x.mean(dim=1) if self.pool == 'mean' else x[:, 0]
 
         # step5 do classification
