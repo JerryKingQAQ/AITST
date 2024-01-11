@@ -5,7 +5,7 @@ Our model is mainly trained and tested under the [torchkeras](https://github.com
 
 Feature extraction can refer to this repository https://github.com/gzoumpourlis/DEAP_MNE_preprocessing. You will need to make some modifications to this repository to fit the details in the paper. In addition, you can refer to the formulas in the paper[1] to implement some features like Hjorth.
 
-[^1]: Zhang, Guanhua, et al. "A review of EEG features for emotion recognition." *Scientia sinica informationis* 49.9 (2019): 1097-1118
+[1]: Zhang, Guanhua, et al. "A review of EEG features for emotion recognition." *Scientia sinica informationis* 49.9 (2019): 1097-1118
 
 
 
