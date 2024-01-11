@@ -166,7 +166,7 @@ class Transformer(nn.Module):
 
 
 class AITST(nn.Module):
-    def __init__(self, input_size, patch_size,channels, num_classes, model_dim,
+    def __init__(self, input_size, patch_size, channels, num_classes, model_dim,
                  emb_dropout=0.1, pool='cls', dim_head=256, channel_rate=5,
                  depth=8, heads=16, mlp_dim=512, dropout=0., model_structure="sa+ca"):
         super(AITST, self).__init__()
@@ -220,23 +220,18 @@ class AITST(nn.Module):
         elif self.model_structure == "no+sa+ca":
             pass
 
-        # step 1 convert input to embedding vector sequence
         x = self.to_patch_embedding(x)
         b, n, _ = x.shape
 
-        # step 2 prepend CLS token embedding
         cls_tokens = repeat(self.cls_token, '1 1 d -> b 1 d', b=b)
         x = torch.cat((cls_tokens, x), dim=1)
 
-        # step3 add position embedding
         x += self.pos_embedding[:, :(n + 1)]
         x = self.dropout(x)
 
-        # step4 pass embedding to Transformer Encoder
         x = self.transformer(x)
         x = x.mean(dim=1) if self.pool == 'mean' else x[:, 0]
 
-        # step5 do classification
         x = self.to_latent(x)
         out = self.mlp_head(x)
 
