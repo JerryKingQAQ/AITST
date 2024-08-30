@@ -211,9 +211,9 @@ class AITST(nn.Module):
             x = self.TA_Encoder(x)
         elif self.model_structure == "sa":
             x = self.SA_Encoder(x)
-        elif self.model_structure == "ca":
+        elif self.model_structure == "ta":
             x = self.TA_Encoder(x)
-        elif self.model_structure == "no+sa+ca":
+        elif self.model_structure == "no+sa+ta":
             pass
 
         x = self.to_patch_embedding(x)
